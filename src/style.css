@@ -1,0 +1,497 @@
+/**
+ * 全局样式文件
+ * 定义深色科技感主题变量和基础样式
+ * 风格定位：控制台 / 工具台 / 现代科技感
+ */
+
+/* ===================================
+   亮色主题变量（浅深结合，非纯白）
+   =================================== */
+:root {
+  /* 背景色系统 - 浅深层次 */
+  --bg-deep: #f0f2f5;           /* 最深层背景 */
+  --bg-primary: #ffffff;        /* 主背景 */
+  --bg-secondary: #f7f8fa;      /* 次级背景/面板背景 */
+  --bg-elevated: #ffffff;       /* 浮层背景 */
+  --bg-overlay: rgba(0, 0, 0, 0.4); /* 遮罩层 */
+
+  /* 文字色系统 */
+  --text-primary: #1d2129;      /* 主标题文字 */
+  --text-secondary: #4e5969;    /* 次级文字 */
+  --text-tertiary: #86909c;     /* 辅助文字 */
+  --text-disabled: #c9cdd4;     /* 禁用文字 */
+  --text-accent: #0d7377;        /* 强调文字（科技绿） */
+
+  /* 边框色系统 */
+  --border-light: #e5e6eb;      /* 浅色边框 */
+  --border-medium: #c9cdd4;     /* 中等边框 */
+  --border-dark: #86909c;       /* 深色边框 */
+
+  /* 强调色系统 - 科技感色调 */
+  --accent-primary: #165dff;    /* 主题蓝 */
+  --accent-secondary: #0d7377;  /* 科技绿 */
+  --accent-success: #00b42a;    /* 成功绿 */
+  --accent-warning: #ff7d00;    /* 警告橙 */
+  --accent-error: #f53f3f;      /* 错误红 */
+  --accent-info: #4f5ff5;       /* 信息紫 */
+
+  /* 阴影系统 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --shadow-glow: 0 0 20px rgba(22, 93, 255, 0.15); /* 发光效果 */
+
+  /* 圆角系统 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* 间距系统 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* 布局系统 */
+  --sidebar-width: 200px;
+  --header-height: 56px;
+  --content-max-width: 1400px;
+}
+
+/* ===================================
+   暗黑主题变量（深色科技感）
+   =================================== */
+.dark {
+  /* 背景色系统 - 深色层次 */
+  --bg-deep: #0f1115;           /* 最深层背景 */
+  --bg-primary: #1a1d23;        /* 主背景 */
+  --bg-secondary: #232730;      /* 次级背景/面板背景 */
+  --bg-elevated: #2b303b;       /* 浮层背景 */
+  --bg-overlay: rgba(0, 0, 0, 0.6); /* 遮罩层 */
+
+  /* 文字色系统 */
+  --text-primary: #e8eaed;      /* 主标题文字 */
+  --text-secondary: #aeb4be;    /* 次级文字 */
+  --text-tertiary: #6b7285;     /* 辅助文字 */
+  --text-disabled: #4b5563;     /* 禁用文字 */
+  --text-accent: #34d399;       /* 强调文字（科技绿） */
+
+  /* 边框色系统 */
+  --border-light: #2b303b;      /* 浅色边框 */
+  --border-medium: #3b4150;     /* 中等边框 */
+  --border-dark: #4b5563;       /* 深色边框 */
+
+  /* 强调色系统 - 保持高饱和度 */
+  --accent-primary: #3b82f6;    /* 主题蓝 */
+  --accent-secondary: #10b981;   /* 科技绿 */
+  --accent-success: #22c55e;    /* 成功绿 */
+  --accent-warning: #f59e0b;    /* 警告橙 */
+  --accent-error: #ef4444;      /* 错误红 */
+  --accent-info: #8b5cf6;       /* 信息紫 */
+
+  /* 阴影系统 - 暗色适配 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.25); /* 发光效果 */
+}
+
+/* ===================================
+   基础样式重置
+   =================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===================================
+   全局基础样式
+   =================================== */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===================================
+   应用根容器
+   =================================== */
+#app {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+}
+
+/* ===================================
+   自定义滚动条样式
+   =================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+}
+
+/* ===================================
+   工具类样式
+   =================================== */
+/* 面板基础样式 */
+.panel {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel:hover {
+  border-color: var(--border-medium);
+}
+
+/* 面板头部 */
+.panel-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 面板内容 */
+.panel-body {
+  padding: var(--space-lg);
+}
+
+/* 输入框基础样式 */
+.input-base {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+}
+
+/* 按钮基础样式 */
+.btn-base {
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #0d4fd1;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-light);
+}
+
+/* 文本区域 */
+.textarea-base {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: var(--space-md);
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.textarea-base:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+/* ===================================
+   Element Plus 组件样式覆盖
+   =================================== */
+
+/* 卡片组件 */
+.el-card {
+  background-color: var(--bg-primary);
+  border-color: var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.el-card__header {
+  border-color: var(--border-light);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.el-card__body {
+  padding: var(--space-lg);
+}
+
+/* 输入框组件 */
+.el-input__wrapper {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+  box-shadow: none;
+}
+
+.el-input__wrapper:hover {
+  border-color: var(--border-medium);
+}
+
+.el-input__wrapper.is-focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+}
+
+.el-input__inner {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.el-input__inner::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 文本域组件 */
+.el-textarea__inner {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 13px;
+}
+
+.el-textarea__inner:focus {
+  border-color: var(--accent-primary);
+}
+
+.el-textarea__inner::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 按钮组件 */
+.el-button {
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.el-button--primary {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.el-button--primary:hover {
+  background-color: #0d4fd1;
+  border-color: #0d4fd1;
+  transform: translateY(-1px);
+}
+
+.el-button--default {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.el-button--default:hover {
+  background-color: var(--border-light);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+/* 菜单组件 */
+.el-menu {
+  border-right: none !important;
+}
+
+.el-menu-item {
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  margin: 0 var(--space-sm);
+  height: 40px;
+  line-height: 40px;
+  transition: all 0.2s ease;
+}
+
+.el-menu-item:hover {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary);
+}
+
+.el-menu-item.is-active {
+  background-color: rgba(22, 93, 255, 0.1) !important;
+  color: var(--accent-primary);
+  position: relative;
+}
+
+.el-menu-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background-color: var(--accent-primary);
+  border-radius: 2px;
+}
+
+/* 分割线组件 */
+.el-divider--horizontal {
+  border-color: var(--border-light);
+  margin: var(--space-lg) 0;
+}
+
+/* 标签页组件 */
+.el-tabs__nav-wrap::after {
+  background-color: var(--border-light);
+}
+
+.el-tabs__item {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.el-tabs__item:hover {
+  color: var(--text-primary);
+}
+
+.el-tabs__item.is-active {
+  color: var(--accent-primary);
+}
+
+.el-tabs__active-bar {
+  background-color: var(--accent-primary);
+}
+
+/* 提示框组件 */
+.el-alert {
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+/* 开关组件 */
+.el-switch {
+  --el-switch-on-color: var(--accent-primary);
+  --el-switch-off-color: var(--border-medium);
+}
+
+/* 上传组件 */
+.el-upload-dragger {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+}
+
+.el-upload-dragger:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-elevated);
+}
+
+/* 消息提示 */
+.el-message {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ===================================
+   动画效果
+   =================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ===================================
+   响应式断点
+   =================================== */
+@media (max-width: 1400px) {
+  :root {
+    --content-max-width: 1200px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0;
+  }
+
+  body {
+    font-size: 14px;
+  }
+}
