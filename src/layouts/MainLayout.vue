@@ -2,13 +2,21 @@
   <!-- 主布局：侧边栏导航 + 内容区域 -->
   <div class="main-layout">
     <!-- 左侧导航栏 -->
-    <aside class="sidebar">
+    <aside class="sidebar" :class="{ collapsed: isCollapsed }">
       <!-- 品牌标识区 -->
       <div class="sidebar-brand">
+        <!-- 品牌图标（始终显示） -->
         <el-icon class="brand-icon" :size="20">
           <Tools />
         </el-icon>
         <span class="brand-text">DevTools</span>
+        <!-- 折叠按钮 -->
+        <button class="collapse-btn" @click="toggleCollapse" title="折叠/展开">
+          <el-icon :size="16">
+            <Expand v-if="isCollapsed" />
+            <Fold v-else />
+          </el-icon>
+        </button>
       </div>
 
       <!-- 导航菜单 -->
@@ -19,6 +27,7 @@
           :to="{ name: route.name }"
           class="nav-item"
           :class="{ active: isActive(route.name) }"
+          :title="isCollapsed ? route.meta.title : ''"
         >
           <el-icon class="nav-icon">
             <component :is="route.meta.icon" />
@@ -33,7 +42,7 @@
           class="theme-toggle"
           :class="{ 'theme-dark': isDark }"
           @click="toggleTheme"
-          title="切换主题"
+          :title="isCollapsed ? (isDark ? '切换亮色' : '切换深色') : '切换主题'"
         >
           <el-icon v-if="isDark" :size="18">
             <Sunny />
@@ -63,10 +72,10 @@
 <script setup lang="ts">
 /**
  * MainLayout.vue - 主布局组件
- * 控制台风格布局，包含侧边栏导航和主题切换
+ * 控制台风格布局，包含侧边栏导航、主题切换和折叠功能
  */
 
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
 import {
@@ -76,7 +85,9 @@ import {
   Clock,
   Picture,
   Moon,
-  Sunny
+  Sunny,
+  Fold,
+  Expand
 } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
@@ -90,6 +101,18 @@ const themeStore = useThemeStore()
  * 是否为暗黑模式
  */
 const isDark = computed(() => themeStore.isDark)
+
+/**
+ * 侧边栏是否折叠
+ */
+const isCollapsed = ref(false)
+
+/**
+ * 切换侧边栏折叠状态
+ */
+const toggleCollapse = (): void => {
+  isCollapsed.value = !isCollapsed.value
+}
 
 /**
  * 导航路由配置
@@ -148,8 +171,15 @@ const toggleTheme = (): void => {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.25s ease,
+              border-color 0.25s ease;
   z-index: 10;
+}
+
+/* 折叠状态 */
+.sidebar.collapsed {
+  width: 64px;
 }
 
 /* ===================================
@@ -166,6 +196,12 @@ const toggleTheme = (): void => {
 
 .brand-icon {
   color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+/* 折叠状态下隐藏品牌图标 */
+.sidebar.collapsed .brand-icon {
+  display: none;
 }
 
 .brand-text {
@@ -173,6 +209,51 @@ const toggleTheme = (): void => {
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  flex: 1;
+}
+
+/* 折叠状态下隐藏品牌文字 */
+.sidebar.collapsed .brand-text {
+  opacity: 0;
+  width: 0;
+  flex: 0;
+}
+
+/* 折叠按钮 */
+.collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.collapse-btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* 折叠状态下整个品牌区居中显示折叠按钮 */
+.sidebar.collapsed .sidebar-brand {
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.sidebar.collapsed .collapse-btn {
+  width: 28px;
+  height: 28px;
 }
 
 /* ===================================
@@ -236,6 +317,30 @@ const toggleTheme = (): void => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* 折叠状态下隐藏导航文字 */
+.sidebar.collapsed .nav-label {
+  opacity: 0;
+  width: 0;
+}
+
+/* 折叠状态下导航项居中 */
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+/* 折叠状态下激活指示条居中 */
+.sidebar.collapsed .nav-item.active::before {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
 }
 
 /* ===================================
@@ -266,6 +371,12 @@ const toggleTheme = (): void => {
   background-color: var(--bg-elevated);
   border-color: var(--border-medium);
   color: var(--text-primary);
+}
+
+/* 折叠状态下主题切换按钮尺寸变小 */
+.sidebar.collapsed .theme-toggle {
+  width: 32px;
+  height: 32px;
 }
 
 /* ===================================

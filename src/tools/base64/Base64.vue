@@ -157,6 +157,47 @@
         </div>
       </div>
     </div>
+
+    <!-- Base64 转图片 -->
+    <div v-show="activeTab === 'base64-image'" class="tool-content">
+      <div class="tool-panel">
+        <!-- 输入区域 -->
+        <div class="input-section">
+          <div class="section-header">
+            <span class="section-label">Base64 输入</span>
+            <button class="btn-text" @click="clearBase64Image">清空</button>
+          </div>
+          <textarea
+            v-model="base64ImageInput"
+            class="code-editor base64-input"
+            placeholder="请输入 Base64 字符串（支持带或不带 data:image 前缀）..."
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <!-- 预览区域 -->
+        <div v-if="base64ImagePreview" class="preview-section">
+          <div class="section-header">
+            <span class="section-label">图片预览</span>
+          </div>
+          <div class="preview-area">
+            <img :src="base64ImagePreview" class="preview-image" alt="Base64 图片预览" />
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="panel-footer">
+          <button class="btn btn-primary" @click="base64ToImage">
+            <el-icon><MagicStick /></el-icon>
+            <span>转换为图片</span>
+          </button>
+          <button v-if="base64ImagePreview" class="btn btn-success" @click="downloadBase64Image">
+            <el-icon><Download /></el-icon>
+            <span>下载图片</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -174,7 +215,8 @@ import {
   Upload,
   MagicStick,
   CopyDocument,
-  Close
+  Close,
+  Download
 } from '@element-plus/icons-vue'
 // 移除未使用的导入
 // import type { UploadFile } from 'element-plus'
@@ -189,7 +231,8 @@ interface TabConfig {
 const tabs: TabConfig[] = [
   { label: '文本转 Base64', value: 'text', icon: Document },
   { label: 'Base64 转文本', value: 'base64', icon: Document },
-  { label: '图片转 Base64', value: 'image', icon: Picture }
+  { label: '图片转 Base64', value: 'image', icon: Picture },
+  { label: 'Base64 转图片', value: 'base64-image', icon: Picture }
 ]
 
 // 当前激活的标签页
@@ -208,6 +251,11 @@ const imagePreview = ref<string>('')
 const imageSize = ref<string>('')
 const base64Length = ref<string>('')
 const fileInput = ref<HTMLInputElement | null>(null)
+
+// Base64 转图片相关
+const base64ImageInput = ref<string>('')
+const base64ImagePreview = ref<string>('')
+const base64ImageFileName = ref<string>('image.png')
 
 /**
  * 文本转 Base64
@@ -386,6 +434,88 @@ const clearImage = (): void => {
     fileInput.value.value = ''
   }
 }
+
+/**
+ * Base64 转图片
+ * 将 Base64 字符串转换为图片并显示预览
+ */
+const base64ToImage = (): void => {
+  if (!base64ImageInput.value.trim()) {
+    ElMessage.warning('请输入 Base64 字符串')
+    return
+  }
+
+  let base64Str = base64ImageInput.value.trim()
+
+  // 处理带有 data URI 前缀的情况
+  if (!base64Str.startsWith('data:image/')) {
+    // 尝试从 base64 字符串中提取图片格式
+    let mimeType = 'image/png' // 默认 png 格式
+    if (base64Str.startsWith('/9j/')) {
+      mimeType = 'image/jpeg'
+    } else if (base64Str.startsWith('R0lGOD') || base64Str.startsWith('R0lGOH')) {
+      mimeType = 'image/gif'
+    } else if (base64Str.startsWith('Qk0')) {
+      mimeType = 'image/bmp'
+    } else if (base64Str.startsWith('UklGR')) {
+      mimeType = 'image/webp'
+    }
+
+    base64ImagePreview.value = `data:${mimeType};base64,${base64Str}`
+    base64ImageFileName.value = `image.${mimeType.split('/')[1]}`
+  } else {
+    base64ImagePreview.value = base64Str
+    // 从 data URI 中提取文件扩展名
+    const match = base64Str.match(/data:image\/(\w+);/)
+    if (match) {
+      base64ImageFileName.value = `image.${match[1]}`
+    }
+  }
+
+  // 验证图片是否有效
+  const img = new Image()
+  img.onload = () => {
+    ElMessage.success('转换成功')
+  }
+  img.onerror = () => {
+    ElMessage.error('Base64 格式错误或不是有效的图片')
+    base64ImagePreview.value = ''
+  }
+  img.src = base64ImagePreview.value
+}
+
+/**
+ * 下载 Base64 图片
+ * 将 Base64 图片保存到本地
+ */
+const downloadBase64Image = (): void => {
+  if (!base64ImagePreview.value) {
+    ElMessage.warning('没有可下载的图片')
+    return
+  }
+
+  try {
+    // 创建下载链接
+    const link = document.createElement('a')
+    link.href = base64ImagePreview.value
+    link.download = base64ImageFileName.value
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    ElMessage.success('下载成功')
+  } catch (e) {
+    ElMessage.error('下载失败')
+  }
+}
+
+/**
+ * 清空 Base64 图片
+ */
+const clearBase64Image = (): void => {
+  base64ImageInput.value = ''
+  base64ImagePreview.value = ''
+  base64ImageFileName.value = 'image.png'
+}
 </script>
 
 <style scoped>
@@ -563,6 +693,16 @@ const clearImage = (): void => {
   transform: translateY(-1px);
 }
 
+.btn-success {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
 .btn-text {
   background-color: transparent;
   color: var(--text-secondary);
@@ -622,6 +762,45 @@ const clearImage = (): void => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===================================
+   Base64 输入区域
+   =================================== */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.base64-input {
+  min-height: 150px;
+}
+
+/* ===================================
+   预览区域
+   =================================== */
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 300px;
+}
+
+.preview-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background-color: var(--bg-deep);
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .file-input {
@@ -754,7 +933,8 @@ const clearImage = (): void => {
   }
 
   .panel-footer {
-    justify-content: stretch;
+    flex-direction: column;
+    gap: var(--space-sm);
   }
 
   .panel-footer .btn {
@@ -769,6 +949,10 @@ const clearImage = (): void => {
 
   .result-info {
     justify-content: space-between;
+  }
+
+  .preview-area {
+    min-height: 200px;
   }
 }
 </style>

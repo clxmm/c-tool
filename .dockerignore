@@ -1,0 +1,51 @@
+# ===================================
+# Docker 忽略文件
+# ===================================
+
+# 依赖目录
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# 构建产物
+dist/
+dist-ssr/
+
+# 编辑器和 IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# 临时文件
+*.log
+*.tmp
+*.temp
+
+# Git
+.git/
+.gitignore
+
+# 文档
+README.md
+CHANGELOG.md
+LICENSE
+
+# 开发相关
+开发/
+*.md
