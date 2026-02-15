@@ -22,6 +22,27 @@
       </div>
     </div>
 
+    <!-- 模式切换 -->
+    <div class="mode-switch">
+      <span class="mode-label">时间戳格式</span>
+      <div class="mode-options">
+        <button
+          class="mode-btn"
+          :class="{ active: timestampMode === 'second' }"
+          @click="timestampMode = 'second'"
+        >
+          <span>秒级</span>
+        </button>
+        <button
+          class="mode-btn"
+          :class="{ active: timestampMode === 'millisecond' }"
+          @click="timestampMode = 'millisecond'"
+        >
+          <span>毫秒级</span>
+        </button>
+      </div>
+    </div>
+
     <!-- 转换工具面板 -->
     <div class="convert-panels">
       <!-- 时间戳转日期 -->
@@ -85,7 +106,7 @@
  * 提供时间戳与日期时间的相互转换功能
  */
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CopyDocument } from '@element-plus/icons-vue'
 
@@ -93,6 +114,9 @@ import { CopyDocument } from '@element-plus/icons-vue'
 const currentTime = ref<string>('')
 const currentTimeMs = ref<string>('')
 const currentTimestamp = ref<string>('')
+
+// 时间戳模式：second-秒级，millisecond-毫秒级
+const timestampMode = ref<'second' | 'millisecond'>('second')
 
 // 时间戳转日期相关
 const timestampInput = ref<string>('')
@@ -121,7 +145,13 @@ const updateCurrentTime = (): void => {
 
   currentTime.value = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
   currentTimeMs.value = `.${ms}`
-  currentTimestamp.value = String(Math.floor(now.getTime() / 1000))
+
+  // 根据选择的模式显示秒或毫秒
+  if (timestampMode.value === 'second') {
+    currentTimestamp.value = String(Math.floor(now.getTime() / 1000))
+  } else {
+    currentTimestamp.value = String(now.getTime())
+  }
 }
 
 /**
@@ -230,6 +260,11 @@ onMounted(() => {
   timer = window.setInterval(updateCurrentTime, 100)
 })
 
+// 监听模式变化，切换时立即更新
+watch(timestampMode, () => {
+  updateCurrentTime()
+})
+
 // 组件卸载时清除定时器
 onUnmounted(() => {
   if (timer) {
@@ -326,6 +361,55 @@ onUnmounted(() => {
   font-weight: 600;
   color: var(--accent-primary);
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* ===================================
+   模式切换
+   =================================== */
+.mode-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.mode-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.mode-options {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.mode-btn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.mode-btn.active {
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
 }
 
 /* ===================================
