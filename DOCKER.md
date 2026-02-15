@@ -72,10 +72,24 @@ docker-compose down
 
 ## GitHub Actions 自动部署
 
-项目配置了 GitHub Actions，会在以下情况自动构建并推送 Docker 镜像：
+项目配置了 GitHub Actions，**仅在推送 git tag 时**自动构建并推送 Docker 镜像：
 
-- 推送到 `main` 分支
-- 创建带有 `v*` 前缀的标签（如 v1.0.0）
+- 创建并推送带有 `v*` 前缀的标签（如 v1.0.0）
+
+### 如何触发构建
+
+```bash
+# 1. 提交代码
+git add .
+git commit -m "更新代码"
+
+# 2. 推送到远程仓库
+git push
+
+# 3. 创建并推送 tag（这将触发 GitHub Actions）
+git tag v1.0.0
+git push origin v1.0.0
+```
 
 ### 配置 Secrets
 

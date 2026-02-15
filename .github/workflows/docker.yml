@@ -4,16 +4,11 @@
 
 name: Build and Push Docker Image
 
-# 触发条件：推送到 main 分支或创建 Pull Request
+# 触发条件：仅推送带 v* 前缀的 git tag 时触发
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
-  pull_request:
-    branches:
-      - main
 
 # 环境变量
 env:
@@ -41,7 +36,6 @@ jobs:
 
       # 登录到 Docker Hub
       - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -54,13 +48,10 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       # 构建并推送 Docker 镜像
       - name: Build and push Docker image
@@ -69,7 +60,7 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: ${{ env.DOCKER_PLATFORMS }}
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
