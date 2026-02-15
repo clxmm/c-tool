@@ -92,7 +92,7 @@ const tools: ToolConfig[] = toolRoutes.map((route, index) => ({
   description: getToolDescription(route.name),
   icon: route.meta.icon,
   colorTheme: route.meta.colorTheme || 'blue'
-})
+}))
 
 /**
  * @param path - 目标路由路径

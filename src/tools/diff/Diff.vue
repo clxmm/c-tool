@@ -10,6 +10,13 @@
     <!-- 对比选项 -->
     <div class="diff-options">
       <div class="option-item">
+        <span class="option-label">实时对比</span>
+        <label class="switch-toggle">
+          <input type="checkbox" v-model="realtimeCompare" class="switch-input" />
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div class="option-item">
         <span class="option-label">忽略空格</span>
         <label class="switch-toggle">
           <input type="checkbox" v-model="ignoreWhitespace" class="switch-input" />
@@ -49,13 +56,24 @@
           <div v-if="showLineNumbers" class="line-numbers" ref="originalLineNumbers">
             <div v-for="(_, i) in originalLinesCount" :key="i" class="line-number">{{ i + 1 }}</div>
           </div>
+          <!-- 行差异高亮覆盖层 -->
+          <div v-if="realtimeCompare" class="diff-highlight-overlay">
+            <div
+              v-for="(isDiff, i) in originalDiffLines"
+              :key="i"
+              class="diff-highlight-row"
+              :class="{ 'is-diff': isDiff }"
+            ></div>
+          </div>
           <textarea
             ref="originalEditor"
             v-model="originalText"
             class="code-editor"
+            :class="{ 'has-overlay': realtimeCompare }"
             placeholder="输入原始文本..."
             spellcheck="false"
             @input="updateOriginalLineCount"
+            @scroll="syncOriginalScroll"
           ></textarea>
         </div>
       </div>
@@ -75,13 +93,24 @@
           <div v-if="showLineNumbers" class="line-numbers" ref="modifiedLineNumbers">
             <div v-for="(_, i) in modifiedLinesCount" :key="i" class="line-number">{{ i + 1 }}</div>
           </div>
+          <!-- 行差异高亮覆盖层 -->
+          <div v-if="realtimeCompare" class="diff-highlight-overlay">
+            <div
+              v-for="(isDiff, i) in modifiedDiffLines"
+              :key="i"
+              class="diff-highlight-row"
+              :class="{ 'is-diff': isDiff }"
+            ></div>
+          </div>
           <textarea
             ref="modifiedEditor"
             v-model="modifiedText"
             class="code-editor"
+            :class="{ 'has-overlay': realtimeCompare }"
             placeholder="输入修改后的文本..."
             spellcheck="false"
             @input="updateModifiedLineCount"
+            @scroll="syncModifiedScroll"
           ></textarea>
         </div>
       </div>
@@ -140,7 +169,7 @@
  * 提供两段文本的差异对比功能
  */
 
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CopyDocument, Delete, Document } from '@element-plus/icons-vue'
 
@@ -149,6 +178,7 @@ const originalText = ref<string>('')
 const modifiedText = ref<string>('')
 
 // 对比选项
+const realtimeCompare = ref<boolean>(true)
 const ignoreWhitespace = ref<boolean>(false)
 const ignoreCase = ref<boolean>(false)
 const showLineNumbers = ref<boolean>(false)
@@ -156,6 +186,10 @@ const showLineNumbers = ref<boolean>(false)
 // 行数统计
 const originalLinesCount = ref<number>(0)
 const modifiedLinesCount = ref<number>(0)
+
+// 实时对比差异标记
+const originalDiffLines = ref<boolean[]>([])
+const modifiedDiffLines = ref<boolean[]>([])
 
 // 对比结果
 const diffLines = ref<DiffLine[]>([])
@@ -199,11 +233,136 @@ const updateModifiedLineCount = (): void => {
 }
 
 /**
+ * 计算实时差异标记
+ * @param origLines 原始文本行数组
+ * @param modLines 修改后文本行数组
+ * @returns [原始文本差异标记, 修改后文本差异标记]
+ */
+const computeDiffLines = (origLines: string[], modLines: string[]): [boolean[], boolean[]] => {
+  const origDiff = new Array(origLines.length).fill(false)
+  const modDiff = new Array(modLines.length).fill(false)
+
+  // 处理选项
+  let processedOrig = [...origLines]
+  let processedMod = [...modLines]
+
+  if (ignoreWhitespace.value) {
+    processedOrig = processedOrig.map(line => line.trim())
+    processedMod = processedMod.map(line => line.trim())
+  }
+
+  if (ignoreCase.value) {
+    processedOrig = processedOrig.map(line => line.toLowerCase())
+    processedMod = processedMod.map(line => line.toLowerCase())
+  }
+
+  // 计算最长公共子序列
+  const lcs = computeLCS(processedOrig, processedMod)
+
+  // 遍历 LCS，标记差异行
+  let origIndex = 0
+  let modIndex = 0
+
+  for (const line of lcs) {
+    // 标记原始文本中的删除行（不同行）
+    while (origIndex < processedOrig.length && processedOrig[origIndex] !== line) {
+      origDiff[origIndex] = true
+      origIndex++
+    }
+
+    // 标记修改后文本中的新增行（不同行）
+    while (modIndex < processedMod.length && processedMod[modIndex] !== line) {
+      modDiff[modIndex] = true
+      modIndex++
+    }
+
+    // 相同行，标记为无差异
+    if (origIndex < processedOrig.length && modIndex < processedMod.length &&
+        processedOrig[origIndex] === line && processedMod[modIndex] === line) {
+      origDiff[origIndex] = false
+      modDiff[modIndex] = false
+      origIndex++
+      modIndex++
+    }
+  }
+
+  // 标记剩余的删除行
+  while (origIndex < processedOrig.length) {
+    origDiff[origIndex] = true
+    origIndex++
+  }
+
+  // 标记剩余的新增行
+  while (modIndex < processedMod.length) {
+    modDiff[modIndex] = true
+    modIndex++
+  }
+
+  return [origDiff, modDiff]
+}
+
+/**
+ * 执行实时对比
+ */
+const doRealtimeCompare = (): void => {
+  if (!realtimeCompare.value) {
+    originalDiffLines.value = []
+    modifiedDiffLines.value = []
+    return
+  }
+
+  const origLines = originalText.value.split('\n')
+  const modLines = modifiedText.value.split('\n')
+
+  const [origDiff, modDiff] = computeDiffLines(origLines, modLines)
+  originalDiffLines.value = origDiff
+  modifiedDiffLines.value = modDiff
+}
+
+/**
+ * 同步原始文本滚动
+ */
+const syncOriginalScroll = (e: Event): void => {
+  const target = e.target as HTMLTextAreaElement
+  const overlay = target.previousElementSibling as HTMLElement
+  if (overlay) {
+    overlay.scrollTop = target.scrollTop
+  }
+}
+
+/**
+ * 同步修改后文本滚动
+ */
+const syncModifiedScroll = (e: Event): void => {
+  const target = e.target as HTMLTextAreaElement
+  const overlay = target.previousElementSibling as HTMLElement
+  if (overlay) {
+    overlay.scrollTop = target.scrollTop
+  }
+}
+
+// 监听实时对比开关
+watch(realtimeCompare, () => {
+  doRealtimeCompare()
+})
+
+// 监听对比选项变化
+watch([ignoreWhitespace, ignoreCase], () => {
+  doRealtimeCompare()
+})
+
+// 监听文本变化，执行实时对比
+watch([originalText, modifiedText], () => {
+  doRealtimeCompare()
+}, { deep: true })
+
+/**
  * 清空原始文本
  */
 const clearOriginal = (): void => {
   originalText.value = ''
   updateOriginalLineCount()
+  doRealtimeCompare()
 }
 
 /**
@@ -212,6 +371,7 @@ const clearOriginal = (): void => {
 const clearModified = (): void => {
   modifiedText.value = ''
   updateModifiedLineCount()
+  doRealtimeCompare()
 }
 
 /**
@@ -437,6 +597,8 @@ const clearAll = (): void => {
   diffLines.value = []
   hasDiff.value = false
   diffStats.value = { added: 0, removed: 0, modified: 0 }
+  originalDiffLines.value = []
+  modifiedDiffLines.value = []
 }
 </script>
 
@@ -615,6 +777,33 @@ const clearAll = (): void => {
   padding-right: var(--space-md);
 }
 
+/* ===================================
+   差异高亮覆盖层
+   =================================== */
+.diff-highlight-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+  padding: var(--space-md) 0 0 0;
+}
+
+.diff-highlight-row {
+  min-height: 20.8px;
+  transition: background-color 0.15s ease;
+}
+
+.diff-highlight-row.is-diff {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid #ef4444;
+  margin-left: calc(-1 * var(--space-md));
+  padding-left: var(--space-md);
+}
+
 .code-editor {
   flex: 1;
   width: 100%;
@@ -628,6 +817,11 @@ const clearAll = (): void => {
   padding: var(--space-md);
   resize: none;
   outline: none;
+}
+
+.code-editor.has-overlay {
+  /* 当有 overlay 时，调整 padding 以避免文字被覆盖 */
+  padding-left: calc(var(--space-md) + 4px);
 }
 
 .code-editor::placeholder {
