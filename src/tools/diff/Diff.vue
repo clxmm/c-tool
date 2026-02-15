@@ -57,7 +57,7 @@
             <div v-for="(_, i) in originalLinesCount" :key="i" class="line-number">{{ i + 1 }}</div>
           </div>
           <!-- 行差异高亮覆盖层 -->
-          <div v-if="realtimeCompare" class="diff-highlight-overlay">
+          <div v-if="realtimeCompare && showLineNumbers" class="diff-highlight-overlay">
             <div
               v-for="(isDiff, i) in originalDiffLines"
               :key="i"
@@ -69,7 +69,7 @@
             ref="originalEditor"
             v-model="originalText"
             class="code-editor"
-            :class="{ 'has-overlay': realtimeCompare }"
+            :class="{ 'has-overlay': realtimeCompare && showLineNumbers }"
             placeholder="输入原始文本..."
             spellcheck="false"
             @input="updateOriginalLineCount"
@@ -94,7 +94,7 @@
             <div v-for="(_, i) in modifiedLinesCount" :key="i" class="line-number">{{ i + 1 }}</div>
           </div>
           <!-- 行差异高亮覆盖层 -->
-          <div v-if="realtimeCompare" class="diff-highlight-overlay">
+          <div v-if="realtimeCompare && showLineNumbers" class="diff-highlight-overlay">
             <div
               v-for="(isDiff, i) in modifiedDiffLines"
               :key="i"
@@ -106,7 +106,7 @@
             ref="modifiedEditor"
             v-model="modifiedText"
             class="code-editor"
-            :class="{ 'has-overlay': realtimeCompare }"
+            :class="{ 'has-overlay': realtimeCompare && showLineNumbers }"
             placeholder="输入修改后的文本..."
             spellcheck="false"
             @input="updateModifiedLineCount"
@@ -362,7 +362,6 @@ watch([originalText, modifiedText], () => {
 const clearOriginal = (): void => {
   originalText.value = ''
   updateOriginalLineCount()
-  doRealtimeCompare()
 }
 
 /**
@@ -371,7 +370,6 @@ const clearOriginal = (): void => {
 const clearModified = (): void => {
   modifiedText.value = ''
   updateModifiedLineCount()
-  doRealtimeCompare()
 }
 
 /**
@@ -597,8 +595,6 @@ const clearAll = (): void => {
   diffLines.value = []
   hasDiff.value = false
   diffStats.value = { added: 0, removed: 0, modified: 0 }
-  originalDiffLines.value = []
-  modifiedDiffLines.value = []
 }
 </script>
 
@@ -777,33 +773,6 @@ const clearAll = (): void => {
   padding-right: var(--space-md);
 }
 
-/* ===================================
-   差异高亮覆盖层
-   =================================== */
-.diff-highlight-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 10;
-  padding: var(--space-md) 0 0 0;
-}
-
-.diff-highlight-row {
-  min-height: 20.8px;
-  transition: background-color 0.15s ease;
-}
-
-.diff-highlight-row.is-diff {
-  background-color: rgba(239, 68, 68, 0.08);
-  border-left: 3px solid #ef4444;
-  margin-left: calc(-1 * var(--space-md));
-  padding-left: var(--space-md);
-}
-
 .code-editor {
   flex: 1;
   width: 100%;
@@ -817,11 +786,6 @@ const clearAll = (): void => {
   padding: var(--space-md);
   resize: none;
   outline: none;
-}
-
-.code-editor.has-overlay {
-  /* 当有 overlay 时，调整 padding 以避免文字被覆盖 */
-  padding-left: calc(var(--space-md) + 4px);
 }
 
 .code-editor::placeholder {
