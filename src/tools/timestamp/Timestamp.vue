@@ -72,12 +72,17 @@
           <h2 class="panel-title">日期 → 时间戳</h2>
         </div>
         <div class="panel-body">
-          <input
-            v-model="dateInput"
-            type="datetime-local"
-            class="input-field input-date"
-            @change="dateToTimestamp"
-          />
+          <div class="date-input-wrapper">
+            <input
+              v-model="dateInput"
+              type="datetime-local"
+              class="input-field input-date"
+              @input="dateToTimestamp"
+            />
+            <button class="btn btn-primary" @click="setNowDate">
+              <span>当前时间</span>
+            </button>
+          </div>
           <div v-if="timestampResult" class="result-list">
             <div class="result-item">
               <span class="result-label">秒级</span>
@@ -126,6 +131,17 @@ const dateResult = ref<string>('')
 const dateInput = ref<string>('')
 const timestampResult = ref<string>('')
 const timestampResultMs = ref<string>('')
+
+// 格式化当前时间为 datetime-local 需要的格式
+const formatForDatetimeLocal = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
+}
 
 let timer: number | null = null
 
@@ -224,6 +240,15 @@ const timestampToDate = (): void => {
   } catch (e) {
     ElMessage.error('转换失败')
   }
+}
+
+/**
+ * 设置当前日期
+ */
+const setNowDate = (): void => {
+  const now = new Date()
+  dateInput.value = formatForDatetimeLocal(now)
+  dateToTimestamp()
 }
 
 /**
@@ -493,6 +518,14 @@ onUnmounted(() => {
 }
 
 /* ===================================
+   日期输入包装器
+   =================================== */
+.date-input-wrapper {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* ===================================
    输入框样式
    =================================== */
 .input-field {
@@ -514,6 +547,31 @@ onUnmounted(() => {
 
 .input-field:focus {
   border-color: var(--accent-primary);
+}
+
+/* ===================================
+   日期输入框特殊样式
+   =================================== */
+.input-date {
+  color-scheme: light;
+}
+
+/* 暗色主题下优化 datetime-local */
+.input-date::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.input-date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Firefox 日期图标优化 */
+.input-date::-moz-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
 }
 
 /* ===================================
