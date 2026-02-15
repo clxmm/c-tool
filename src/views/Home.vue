@@ -53,6 +53,14 @@ import { useRouter } from 'vue-router'
 import { Document, Clock, Picture, ArrowRight } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
+// 获取路由配置中定义的工具列表
+const toolRoutes: { name: string; meta: any }[] = [
+  { name: 'JsonFormat', meta: { title: 'JSON 格式化', icon: Document, colorTheme: 'blue' } },
+  { name: 'Timestamp', meta: { title: '时间戳转换', icon: Clock, colorTheme: 'green' } },
+  { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture, colorTheme: 'purple' } },
+  { name: 'Diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } }
+]
+
 // 路由实例
 const router = useRouter()
 
@@ -62,35 +70,31 @@ interface ToolConfig {
   title: string
   description: string
   icon: Component
-  colorTheme: 'blue' | 'green' | 'purple'
+  colorTheme: 'blue' | 'green' | 'purple' | 'orange'
 }
 
-const tools: ToolConfig[] = [
-  {
-    path: '/json',
-    title: 'JSON 格式化',
-    description: '格式化、验证和美化 JSON 字符串',
-    icon: Document,
-    colorTheme: 'blue'
-  },
-  {
-    path: '/timestamp',
-    title: '时间戳转换',
-    description: '时间戳与日期时间相互转换',
-    icon: Clock,
-    colorTheme: 'green'
-  },
-  {
-    path: '/base64',
-    title: 'Base64 转换',
-    description: '文本编码与图片转 Base64',
-    icon: Picture,
-    colorTheme: 'purple'
+/**
+ * 获取工具描述
+ */
+const getToolDescription = (name: string): string => {
+  const descriptions: Record<string, string> = {
+    'JsonFormat': '格式化、验证和美化 JSON 字符串',
+    'Timestamp': '时间戳与日期时间相互转换',
+    'Base64': '文本编码与图片转 Base64',
+    'Diff': '比较两段文本的差异'
   }
-]
+  return descriptions[name] || ''
+}
+
+const tools: ToolConfig[] = toolRoutes.map((route, index) => ({
+  path: `/${route.name.toLowerCase()}`,
+  title: route.meta.title,
+  description: getToolDescription(route.name),
+  icon: route.meta.icon,
+  colorTheme: route.meta.colorTheme || 'blue'
+})
 
 /**
- * 跳转到指定工具页面
  * @param path - 目标路由路径
  */
 const navigateTo = (path: string) => {
@@ -204,6 +208,11 @@ const navigateTo = (path: string) => {
 .icon-purple {
   background: linear-gradient(135deg, #4f5ff5 0%, #8b5cf6 100%);
   box-shadow: 0 4px 12px rgba(79, 95, 245, 0.3);
+}
+
+.icon-orange {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
 }
 
 /* ===================================

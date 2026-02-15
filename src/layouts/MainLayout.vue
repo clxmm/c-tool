@@ -129,7 +129,8 @@ const menuRoutes: MenuRoute[] = [
   { name: 'Home', meta: { title: '首页', icon: HomeFilled } },
   { name: 'JsonFormat', meta: { title: 'JSON 格式化', icon: Document } },
   { name: 'Timestamp', meta: { title: '时间戳转换', icon: Clock } },
-  { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture } }
+  { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture } },
+  { name: 'Diff', meta: { title: '文本对比', icon: Document } }
 ]
 
 /**

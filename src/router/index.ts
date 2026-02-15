@@ -40,6 +40,13 @@ const routes: RouteRecordRaw[] = [
         name: 'Base64',
         component: () => import('@/tools/base64/Base64.vue'),
         meta: { title: 'Base64 转换', icon: 'Picture' }
+      },
+      // 文本对比工具
+      {
+        path: 'diff',
+        name: 'Diff',
+        component: () => import('@/tools/diff/Diff.vue'),
+        meta: { title: '文本对比', icon: 'Document' }
       }
     ]
   }
