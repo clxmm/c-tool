@@ -238,7 +238,20 @@ const dateToTimestamp = (): void => {
   }
 
   try {
-    const date = new Date(dateInput.value)
+    // datetime-local 返回的格式是 "YYYY-MM-DDTHH:mm:ss"
+    // 需要正确解析这种格式
+    const [dateStr, timeStr] = dateInput.value.split('T')
+
+    if (!dateStr || !timeStr) {
+      ElMessage.error('无效的日期')
+      return
+    }
+
+    const [year, month, day] = dateStr.split('-').map(Number)
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number)
+
+    // 创建日期对象（月份需要减1，因为月份从0开始）
+    const date = new Date(year, month - 1, day, hours, minutes, seconds || 0)
 
     if (isNaN(date.getTime())) {
       ElMessage.error('无效的日期')
