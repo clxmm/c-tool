@@ -50,7 +50,7 @@
  */
 
 import { useRouter } from 'vue-router'
-import { Document, Clock, Picture, ArrowRight, Promotion, Lock } from '@element-plus/icons-vue'
+import { Document, Clock, Picture, ArrowRight, Promotion, Lock, Coin } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
 // 获取路由配置中定义的工具列表
@@ -60,7 +60,8 @@ const toolRoutes: { name: string; meta: any }[] = [
   { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture, colorTheme: 'purple' } },
   { name: 'Diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } },
   { name: 'QRCode', meta: { title: '二维码工具', icon: Promotion, colorTheme: 'blue' } },
-  { name: 'password', meta: { title: '密码生成器', icon: Lock, colorTheme: 'green' } }
+  { name: 'password', meta: { title: '密码生成器', icon: Lock, colorTheme: 'green' } },
+  { name: 'uuid', meta: { title: 'UUID 生成器', icon: Coin, colorTheme: 'purple' } }
 ]
 
 // 路由实例
@@ -85,13 +86,14 @@ const getToolDescription = (name: string): string => {
     'Base64': '文本编码与图片转 Base64',
     'Diff': '比较两段文本的差异',
     'QRCode': '生成二维码与扫描识别二维码',
-    'PasswordGenerator': '根据自定义规则生成安全密码'
+    'password': '根据自定义规则生成安全密码',
+    'uuid': '生成标准 UUID（通用唯一识别码）'
   }
   return descriptions[name] || ''
 }
 
-const tools: ToolConfig[] = toolRoutes.map((route, index) => ({
-  path: `/${route.name.toLowerCase()}`,
+const tools: ToolConfig[] = toolRoutes.map((route) => ({
+  path: `/${route.name}`,
   title: route.meta.title,
   description: getToolDescription(route.name),
   icon: route.meta.icon,

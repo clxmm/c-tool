@@ -58,9 +58,16 @@ const routes: RouteRecordRaw[] = [
       // 密码生成器工具
       {
         path: 'password',
-        name: 'PasswordGenerator',
+        name: 'password',
         component: () => import('@/tools/password/PasswordGenerator.vue'),
         meta: { title: '密码生成器', icon: 'Lock' }
+      },
+      // UUID 生成器工具
+      {
+        path: 'uuid',
+        name: 'uuid',
+        component: () => import('@/tools/uuid/UuidGenerator.vue'),
+        meta: { title: 'UUID 生成器', icon: 'Coin' }
       }
     ]
   }
