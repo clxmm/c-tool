@@ -47,6 +47,13 @@ const routes: RouteRecordRaw[] = [
         name: 'Diff',
         component: () => import('@/tools/diff/Diff.vue'),
         meta: { title: '文本对比', icon: 'Document' }
+      },
+      // 二维码工具
+      {
+        path: 'qrcode',
+        name: 'QRCode',
+        component: () => import('@/tools/qrcode/QRCode.vue'),
+        meta: { title: '二维码工具', icon: 'Promotion' }
       }
     ]
   }

@@ -50,7 +50,7 @@
  */
 
 import { useRouter } from 'vue-router'
-import { Document, Clock, Picture, ArrowRight } from '@element-plus/icons-vue'
+import { Document, Clock, Picture, ArrowRight, Promotion } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
 // 获取路由配置中定义的工具列表
@@ -58,7 +58,8 @@ const toolRoutes: { name: string; meta: any }[] = [
   { name: 'JsonFormat', meta: { title: 'JSON 格式化', icon: Document, colorTheme: 'blue' } },
   { name: 'Timestamp', meta: { title: '时间戳转换', icon: Clock, colorTheme: 'green' } },
   { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture, colorTheme: 'purple' } },
-  { name: 'Diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } }
+  { name: 'Diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } },
+  { name: 'QRCode', meta: { title: '二维码工具', icon: Promotion, colorTheme: 'blue' } }
 ]
 
 // 路由实例
@@ -81,7 +82,8 @@ const getToolDescription = (name: string): string => {
     'JsonFormat': '格式化、验证和美化 JSON 字符串',
     'Timestamp': '时间戳与日期时间相互转换',
     'Base64': '文本编码与图片转 Base64',
-    'Diff': '比较两段文本的差异'
+    'Diff': '比较两段文本的差异',
+    'QRCode': '生成二维码与扫描识别二维码'
   }
   return descriptions[name] || ''
 }
