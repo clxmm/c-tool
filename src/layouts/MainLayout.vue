@@ -89,7 +89,8 @@ import {
   Fold,
   Expand,
   Lock,
-  Coin
+  Coin,
+  Key
 } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
@@ -134,7 +135,8 @@ const menuRoutes: MenuRoute[] = [
   { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture } },
   { name: 'Diff', meta: { title: '文本对比', icon: Document } },
   { name: 'password', meta: { title: '密码生成器', icon: Lock } },
-  { name: 'uuid', meta: { title: 'UUID 生成器', icon: Coin } }
+  { name: 'uuid', meta: { title: 'UUID 生成器', icon: Coin } },
+  { name: 'jwt', meta: { title: 'JWT 工具', icon: Key } }
 ]
 
 /**

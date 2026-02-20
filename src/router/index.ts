@@ -68,6 +68,13 @@ const routes: RouteRecordRaw[] = [
         name: 'uuid',
         component: () => import('@/tools/uuid/UuidGenerator.vue'),
         meta: { title: 'UUID 生成器', icon: 'Coin' }
+      },
+      // JWT 工具
+      {
+        path: 'jwt',
+        name: 'jwt',
+        component: () => import('@/tools/jwt/JwtTool.vue'),
+        meta: { title: 'JWT 工具', icon: 'Key' }
       }
     ]
   }
