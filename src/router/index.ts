@@ -54,6 +54,13 @@ const routes: RouteRecordRaw[] = [
         name: 'QRCode',
         component: () => import('@/tools/qrcode/QRCode.vue'),
         meta: { title: '二维码工具', icon: 'Promotion' }
+      },
+      // 密码生成器工具
+      {
+        path: 'password',
+        name: 'PasswordGenerator',
+        component: () => import('@/tools/password/PasswordGenerator.vue'),
+        meta: { title: '密码生成器', icon: 'Lock' }
       }
     ]
   }

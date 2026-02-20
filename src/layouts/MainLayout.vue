@@ -87,7 +87,8 @@ import {
   Moon,
   Sunny,
   Fold,
-  Expand
+  Expand,
+  Lock
 } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
@@ -130,7 +131,8 @@ const menuRoutes: MenuRoute[] = [
   { name: 'JsonFormat', meta: { title: 'JSON 格式化', icon: Document } },
   { name: 'Timestamp', meta: { title: '时间戳转换', icon: Clock } },
   { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture } },
-  { name: 'Diff', meta: { title: '文本对比', icon: Document } }
+  { name: 'Diff', meta: { title: '文本对比', icon: Document } },
+  { name: 'PasswordGenerator', meta: { title: '密码生成器', icon: Lock } }
 ]
 
 /**
