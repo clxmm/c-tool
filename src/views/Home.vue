@@ -66,15 +66,15 @@ import { Document, Clock, Picture, ArrowRight, Promotion, Lock, Coin, Key, Searc
 import type { Component } from 'vue'
 
 // 获取路由配置中定义的工具列表
-const toolRoutes: { name: string; meta: any }[] = [
-  { name: 'JsonFormat', meta: { title: 'JSON 格式化', icon: Document, colorTheme: 'blue' } },
-  { name: 'Timestamp', meta: { title: '时间戳转换', icon: Clock, colorTheme: 'green' } },
-  { name: 'Base64', meta: { title: 'Base64 转换', icon: Picture, colorTheme: 'purple' } },
-  { name: 'Diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } },
-  { name: 'QRCode', meta: { title: '二维码工具', icon: Promotion, colorTheme: 'blue' } },
-  { name: 'password', meta: { title: '密码生成器', icon: Lock, colorTheme: 'green' } },
-  { name: 'uuid', meta: { title: 'UUID 生成器', icon: Coin, colorTheme: 'purple' } },
-  { name: 'jwt', meta: { title: 'JWT 工具', icon: Key, colorTheme: 'orange' } }
+const toolRoutes: { name: string; path: string; meta: any }[] = [
+  { name: 'JsonFormat', path: 'json', meta: { title: 'JSON 格式化', icon: Document, colorTheme: 'blue' } },
+  { name: 'Timestamp', path: 'timestamp', meta: { title: '时间戳转换', icon: Clock, colorTheme: 'green' } },
+  { name: 'Base64', path: 'base64', meta: { title: 'Base64 转换', icon: Picture, colorTheme: 'purple' } },
+  { name: 'Diff', path: 'diff', meta: { title: '文本对比', icon: Document, colorTheme: 'orange' } },
+  { name: 'QRCode', path: 'qrcode', meta: { title: '二维码工具', icon: Promotion, colorTheme: 'blue' } },
+  { name: 'password', path: 'password', meta: { title: '密码生成器', icon: Lock, colorTheme: 'green' } },
+  { name: 'uuid', path: 'uuid', meta: { title: 'UUID 生成器', icon: Coin, colorTheme: 'purple' } },
+  { name: 'jwt', path: 'jwt', meta: { title: 'JWT 工具', icon: Key, colorTheme: 'orange' } }
 ]
 
 // 路由实例
@@ -113,7 +113,7 @@ const getToolDescription = (name: string): string => {
 const filteredTools = computed((): ToolConfig[] => {
   if (!searchKeyword.value.trim()) {
     return toolRoutes.map((route) => ({
-      path: `/${route.name}`,
+      path: `/${route.path}`,
       title: route.meta.title,
       description: getToolDescription(route.name),
       icon: route.meta.icon,
@@ -124,7 +124,7 @@ const filteredTools = computed((): ToolConfig[] => {
   return toolRoutes
     .filter(route => route.meta.title.toLowerCase().includes(keyword))
     .map(route => ({
-      path: `/${route.name}`,
+      path: `/${route.path}`,
       title: route.meta.title,
       description: getToolDescription(route.name),
       icon: route.meta.icon,
