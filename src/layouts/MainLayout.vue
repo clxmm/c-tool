@@ -91,7 +91,8 @@ import {
   Expand,
   Lock,
   Coin,
-  Key
+  Key,
+  Timer
 } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
@@ -138,7 +139,8 @@ const menuRoutes: MenuRoute[] = [
   { name: 'Diff', meta: { title: '文本对比', icon: Document } },
   { name: 'password', meta: { title: '密码生成器', icon: Lock } },
   { name: 'uuid', meta: { title: 'UUID 生成器', icon: Coin } },
-  { name: 'jwt', meta: { title: 'JWT 工具', icon: Key } }
+  { name: 'jwt', meta: { title: 'JWT 工具', icon: Key } },
+  { name: 'TimeUnit', meta: { title: '时间单位转换', icon: Timer } }
 ]
 
 /**

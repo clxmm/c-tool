@@ -62,7 +62,7 @@
 
 import { useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
-import { Document, Clock, Picture, ArrowRight, Promotion, Lock, Coin, Key, Search } from '@element-plus/icons-vue'
+import { Document, Clock, Picture, ArrowRight, Promotion, Lock, Coin, Key, Search, Timer } from '@element-plus/icons-vue'
 import type { Component } from 'vue'
 
 // 获取路由配置中定义的工具列表
@@ -74,7 +74,8 @@ const toolRoutes: { name: string; path: string; meta: any }[] = [
   { name: 'QRCode', path: 'qrcode', meta: { title: '二维码工具', icon: Promotion, colorTheme: 'blue' } },
   { name: 'password', path: 'password', meta: { title: '密码生成器', icon: Lock, colorTheme: 'green' } },
   { name: 'uuid', path: 'uuid', meta: { title: 'UUID 生成器', icon: Coin, colorTheme: 'purple' } },
-  { name: 'jwt', path: 'jwt', meta: { title: 'JWT 工具', icon: Key, colorTheme: 'orange' } }
+  { name: 'jwt', path: 'jwt', meta: { title: 'JWT 工具', icon: Key, colorTheme: 'orange' } },
+  { name: 'TimeUnit', path: 'time-unit', meta: { title: '时间单位转换', icon: Timer, colorTheme: 'green' } }
 ]
 
 // 路由实例
@@ -104,7 +105,8 @@ const getToolDescription = (name: string): string => {
     'QRCode': '生成二维码与扫描识别二维码',
     'password': '根据自定义规则生成安全密码',
     'uuid': '生成标准 UUID（通用唯一识别码）',
-    'jwt': 'JSON Web Token 解密、加密、校验'
+    'jwt': 'JSON Web Token 解密、加密、校验',
+    'TimeUnit': '纳秒到年，多维度时间单位实时换算'
   }
   return descriptions[name] || ''
 }

@@ -75,6 +75,13 @@ const routes: RouteRecordRaw[] = [
         name: 'jwt',
         component: () => import('@/tools/jwt/JwtTool.vue'),
         meta: { title: 'JWT 工具', icon: 'Key' }
+      },
+      // 时间单位转换工具
+      {
+        path: 'time-unit',
+        name: 'TimeUnit',
+        component: () => import('@/tools/time-unit/TimeUnitConvert.vue'),
+        meta: { title: '时间单位转换', icon: 'Timer' }
       }
     ]
   }
